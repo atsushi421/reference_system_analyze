@@ -76,6 +76,9 @@ named_paths:
   - node_name: /NDTLocalizer
     subscribe_topic_name: /PointCloudMapLoader
     publish_topic_name: /NDTLocalizer
+  - node_name: /BehaviorPlanner
+    subscribe_topic_name: /NDTLocalizer
+    publish_topic_name: /BehaviorPlanner
 
 - path_name: visualizer
   node_chain:
@@ -100,6 +103,15 @@ named_paths:
   - node_name: /BehaviorPlanner
     subscribe_topic_name: /Lanelet2MapLoader
     publish_topic_name: /BehaviorPlanner
+
+- path_name: euclidean_cluster_settings
+  node_chain:
+  - node_name: /EuclideanClusterSettings
+    subscribe_topic_name: UNDEFINED
+    publish_topic_name: /EuclideanClusterSettings
+  - node_name: /EuclideanClusterDetector
+    subscribe_topic_name: /EuclideanClusterSettings
+    publish_topic_name: /EuclideanClusterDetector
 
 executors:
 - executor_type: single_threaded_executor
