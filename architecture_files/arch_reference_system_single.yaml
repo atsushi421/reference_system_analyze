@@ -1,5 +1,5 @@
 named_paths:
-- path_name: target_path
+- path_name: main_path
   node_chain:
   - node_name: /FrontLidarDriver
     publish_topic_name: /FrontLidarDriver
@@ -31,6 +31,76 @@ named_paths:
   - node_name: /VehicleDBWSystem
     publish_topic_name: UNDEFINED
     subscribe_topic_name: /VehicleInterface
+
+- path_name: sub_path
+  node_chain:
+  - node_name: /RearLidarDriver
+    subscribe_topic_name: UNDEFINED
+    publish_topic_name: /RearLidarDriver
+  - node_name: /PointsTransformerRear
+    subscribe_topic_name: /RearLidarDriver
+    publish_topic_name: /PointsTransformerRear
+  - node_name: /PointCloudFusion
+    subscribe_topic_name: /PointsTransformerRear
+    publish_topic_name: /PointCloudFusion
+  - node_name: /VoxelGridDownsampler
+    subscribe_topic_name: /PointCloudFusion
+    publish_topic_name: /VoxelGridDownsampler
+  - node_name: /NDTLocalizer
+    subscribe_topic_name: /VoxelGridDownsampler
+    publish_topic_name: /NDTLocalizer
+  - node_name: /Lanelet2GlobalPlanner
+    subscribe_topic_name: /NDTLocalizer
+    publish_topic_name: /Lanelet2GlobalPlanner
+  - node_name: /Lanelet2MapLoader
+    subscribe_topic_name: /Lanelet2GlobalPlanner
+    publish_topic_name: /Lanelet2MapLoader
+  - node_name: /LanePlanner
+    subscribe_topic_name: /Lanelet2MapLoader
+    publish_topic_name: /LanePlanner
+  - node_name: /BehaviorPlanner
+    subscribe_topic_name: /LanePlanner
+    publish_topic_name: /BehaviorPlanner
+  - node_name: /VehicleInterface
+    subscribe_topic_name: /BehaviorPlanner
+    publish_topic_name: /VehicleInterface
+
+- path_name: point_cloud_map
+  node_chain:
+  - node_name: /PointCloudMap
+    subscribe_topic_name: UNDEFINED
+    publish_topic_name: /PointCloudMap
+  - node_name: /PointCloudMapLoader
+    subscribe_topic_name: /PointCloudMap
+    publish_topic_name: /PointCloudMapLoader
+  - node_name: /NDTLocalizer
+    subscribe_topic_name: /PointCloudMapLoader
+    publish_topic_name: /NDTLocalizer
+
+- path_name: visualizer
+  node_chain:
+  - node_name: /Visualizer
+    subscribe_topic_name: UNDEFINED
+    publish_topic_name: /Visualizer
+  - node_name: /Lanelet2GlobalPlanner
+    subscribe_topic_name: /Visualizer
+    publish_topic_name: /Lanelet2GlobalPlanner
+  - node_name: /BehaviorPlanner
+    subscribe_topic_name: /Lanelet2GlobalPlanner
+    publish_topic_name: /BehaviorPlanner
+
+- path_name: lanelet2map
+  node_chain:
+  - node_name: /Lanelet2Map
+    subscribe_topic_name: UNDEFINED
+    publish_topic_name: /Lanelet2Map
+  - node_name: /Lanelet2MapLoader
+    subscribe_topic_name: /Lanelet2Map
+    publish_topic_name: /Lanelet2MapLoader
+  - node_name: /BehaviorPlanner
+    subscribe_topic_name: /Lanelet2MapLoader
+    publish_topic_name: /BehaviorPlanner
+
 executors:
 - executor_type: single_threaded_executor
   executor_name: executor_0
@@ -108,12 +178,14 @@ nodes:
     symbol: nodes::rclcpp_system::Cyclic::Cyclic(nodes::CyclicSettings const&)::{lambda(std::shared_ptr<reference_interfaces::msg::Message4kb_<std::allocator<void>
       > >)#1}
   variable_passings:
-  - callback_name_write: UNDEFINED
-    callback_name_read: UNDEFINED
+  - callback_name_write: /BehaviorPlanner/callback_6
+    callback_name_read: /BehaviorPlanner/callback_0
+  - callback_name_write: /BehaviorPlanner/callback_3
+    callback_name_read: /BehaviorPlanner/callback_0
   publishes:
   - topic_name: /BehaviorPlanner
     callback_names:
-    - UNDEFINED
+    - /BehaviorPlanner/callback_0
   subscribes:
   - topic_name: /LanePlanner
     callback_name: /BehaviorPlanner/callback_6
@@ -286,7 +358,7 @@ nodes:
   publishes:
   - topic_name: /Lanelet2GlobalPlanner
     callback_names:
-    - UNDEFINED
+    - /Lanelet2GlobalPlanner/callback_1
   subscribes:
   - topic_name: /NDTLocalizer
     callback_name: /Lanelet2GlobalPlanner/callback_1
@@ -338,7 +410,7 @@ nodes:
   publishes:
   - topic_name: /Lanelet2MapLoader
     callback_names:
-    - UNDEFINED
+    - /Lanelet2MapLoader/callback_1
   subscribes:
   - topic_name: /Lanelet2GlobalPlanner
     callback_name: /Lanelet2MapLoader/callback_1
@@ -398,7 +470,7 @@ nodes:
   publishes:
   - topic_name: /NDTLocalizer
     callback_names:
-    - UNDEFINED
+    - /NDTLocalizer/callback_0
   subscribes:
   - topic_name: /PointCloudMapLoader
     callback_name: /NDTLocalizer/callback_1
@@ -481,7 +553,7 @@ nodes:
   publishes:
   - topic_name: /PointCloudFusion
     callback_names:
-    - UNDEFINED
+    - /PointCloudFusion/callback_1
   subscribes:
   - topic_name: /PointsTransformerFront
     callback_name: /PointCloudFusion/callback_0
@@ -655,7 +727,7 @@ nodes:
   publishes:
   - topic_name: /VehicleInterface
     callback_names:
-    - UNDEFINED
+    - /VehicleInterface/callback_1
   subscribes:
   - topic_name: /BehaviorPlanner
     callback_name: /VehicleInterface/callback_1
