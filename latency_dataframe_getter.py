@@ -30,7 +30,7 @@ class LatencyDataFrameGetter:
                     rstrip_s=0,
                 )
                 edge_latency_df[self._get_edge_column_name(comm)] = \
-                    pd.Series(pubsub_latency * 1.0e-6)
+                    pd.Series(pubsub_latency * 1.0e-3)
         
         return edge_latency_df
 
@@ -66,7 +66,7 @@ class LatencyDataFrameGetter:
                     rstrip_s=0,
                 )
                 node_latency_df[node_path.node_name] = \
-                    pd.Series(latency * 1.0e-6)
+                    pd.Series(latency * 1.0e-3)
 
         # Get tail node latency
         tail_node_name = path.summary['path'][-1]['node']
@@ -96,7 +96,7 @@ class LatencyDataFrameGetter:
         cb_latency_list = []
         cb_latency_df = callback.to_dataframe()
         for ts_tuple in cb_latency_df.itertuples():
-            latency = (ts_tuple._2 - ts_tuple._1) * 1.0e-6
+            latency = (ts_tuple._2 - ts_tuple._1) * 1.0e-3
             cb_latency_list.append(latency)
 
         return pd.Series(cb_latency_list)
