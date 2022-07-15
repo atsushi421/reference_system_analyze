@@ -1,7 +1,7 @@
 import pandas as pd
 
 from caret_analyze import Application
-from caret_analyze.runtime import CallbackBase, Node
+from caret_analyze.runtime import CallbackBase, Node, Communication
 
 
 class LatencyDataFrameGetter:
@@ -10,6 +10,38 @@ class LatencyDataFrameGetter:
         app: Application
     ) -> None:
         self._app = app
+
+    def get_edge_latency_df(
+        self,
+        target_path_name: str
+    ) -> pd.DataFrame:
+        path = self._app.get_path(target_path_name)
+        edge_latency_df = pd.DataFrame(
+            columns=[self._get_edge_column_name(comm)
+                     for comm in path.communications]
+        )
+
+        for comm in path.communications:
+            if comm.column_names:
+                _, pubsub_latency = comm.to_timeseries(
+                    remove_dropped=True,
+                    treat_drop_as_delay=False,
+                    lstrip_s=0,
+                    rstrip_s=0,
+                )
+                edge_latency_df[self._get_edge_column_name(comm)] = \
+                    pd.Series(pubsub_latency * 1.0e-6)
+        
+        return edge_latency_df
+
+    def _get_edge_column_name(
+        self,
+        comm: Communication
+    ) -> str:
+        src_node_name = comm.column_names[0].split('/')[1]
+        target_node_name = comm.column_names[-1].split('/')[1]
+
+        return src_node_name + '~' + target_node_name
 
     def get_node_latency_df(
         self,
