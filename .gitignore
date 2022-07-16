@@ -131,3 +131,4 @@ dmypy.json
 # add
 ctfs/
 debug.py
+*.json
