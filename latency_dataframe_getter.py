@@ -65,8 +65,16 @@ class LatencyDataFrameGetter:
                     lstrip_s=0,
                     rstrip_s=0,
                 )
-                node_latency_df[node_path.node_name] = \
-                    pd.Series(latency * 1.0e-3)
+                # HACK
+                if node_path.node_name == '/BehaviorPlanner':
+                    behavior_planner = self._app.get_node('/BehaviorPlanner')
+                    timer_callback = behavior_planner.get_callback(
+                        '/BehaviorPlanner/callback_0')
+                    node_latency_df['/BehaviorPlanner'] = \
+                        self._get_callback_latency(timer_callback)
+                else:
+                    node_latency_df[node_path.node_name] = \
+                        pd.Series(latency * 1.0e-3)
 
         # Get tail node latency
         tail_node_name = path.summary['path'][-1]['node']
